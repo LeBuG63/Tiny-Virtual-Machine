@@ -14,7 +14,7 @@
 #define PRNT_C 0x11
 
 struct s_cpu {
-    unsigned        reg[0x10];  // 12 registres
+    unsigned        reg[0xC];  // 12 registres
     unsigned        ins;        // instruction
     long int        size;       // la taille du programme
     unsigned char   *code;
@@ -44,7 +44,7 @@ CPU *cpu_create(unsigned char *code, unsigned size)  {
     cpu->size = size;
     cpu->code = code;
 
-    for(int i = 0; i < 0x10; ++i)
+    for(int i = 0; i < 0xC; ++i)
         cpu->reg[i] = 0;
 
     return cpu;
@@ -68,7 +68,8 @@ void cpu_run(CPU *cpu) {
                 ++cpu->ins; \
                 cpu->reg[cpu->code[cpu->ins]] = cpu->code[cpu->ins + 1] op cpu->code[cpu->ins + 2]; \
                 cpu->ins += 2; \
-                break;} \
+                break; \
+            }
 
             OPERATION(ADD, +)
             OPERATION(SUB, -)
@@ -92,11 +93,14 @@ void cpu_run(CPU *cpu) {
     }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char *argv[]) {
     unsigned char   *code = NULL;
     long int        size;
 
-    CPU     *cpu = NULL;
+    if(argv[1] == NULL)
+        return -1;
+
+    CPU     *cpu;
     FILE    *file = fopen(argv[1], "rb");
 
     if(!file) {
@@ -104,14 +108,15 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    code = malloc(size);
+    printf("File loaded\n");
 
     size = getfilesize(file);
+    code = malloc(size);
 
     fread(code, 1, size, file);
     fclose(file);
 
-    cpu_create(code, size);
+    cpu = cpu_create(code, size);
 
     if(!cpu)
         return -1;
