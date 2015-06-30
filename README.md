@@ -1,11 +1,12 @@
 # Tiny-Virtual-Machine
 Exemple
 -------
-Il faut tout d'abord creer un fichier vide et que vous ouvrirez avec un editeur hexadecimal comme HexEdit. 
-Ensuite, entrer ce code: 00 00 0F 36 01 01 5A 2F 02 02 4B 8C 03 03 FF 0F 10 00 10 01 10 02 10 03
+Il faut tout d'abord créér un fichier vide et que vous ouvrirez avec un éditeur hexadécimal comme Hex Edit.
+Ensuite, entrez ce code: 00 00 0F 36 01 01 5A 2F 02 02 4B 8C 03 03 FF 0F 10 00 10 01 10 02 10 03
 
-00 00 0F 36 doit se lire: je veux une addtion que je place dans le registre numero 0 et cette adition est 0F + 36. 
-La premiere partie est l'opération: 
+00 00 0F 36 doit se lire: je veux une addtion que je place dans le registre numero 0 et cette adition est 0F + 36.
+
+La premiere partie est l'opération que vous voulez effectuer: 
  - 0x00 concerne les additions
  - 0x01 les soustractions
  - 0x02 les multiplications
