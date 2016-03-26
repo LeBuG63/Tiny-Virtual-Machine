@@ -20,7 +20,7 @@ Méthodes d'affichage:
  - 0x20: affiche un entier
  - 0x21: affiche une lettre
 
- Saisir l'entree du clavier:
+Saisir l'entree du clavier:
  - 0x22
 
 Exemple
