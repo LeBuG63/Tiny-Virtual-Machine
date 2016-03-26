@@ -77,7 +77,7 @@ long get_input(int *err) {
     
     fgets(str, 16, stdin);
 
-    if(isalpha(str[0]))
+    if(isalpha(str[0]) && str[1] == '\n')
         res = (int)str[0];
     else {
         for(unsigned i = 0; i < strlen(str) - 1 && !*err; ++i)
@@ -93,9 +93,9 @@ long get_input(int *err) {
 
 void handle_err(int err, unsigned instruction) {
     static const char *err_msg[] = {
-        "L'entree clavier a mal etait saisie",
-        "Probleme de formule",
-        "Acces a un registre inexistant"
+        "Keyboard input is incorrect",
+        "Incorrect expression",
+        "Inexistant register"
     };
  
     if(err > 0 && err < ERR_LAST) {
