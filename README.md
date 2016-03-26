@@ -15,7 +15,7 @@ Les opérations
  - 0x09: decallage de bits vers la gauche
  - 0x0A: decallage de bits vers la droite
  - 0x0B: l'operateur NON
- - 
+
 Méthodes d'affichage:
  - 0x20: affiche un entier
  - 0x21: affiche une lettre
