@@ -22,6 +22,13 @@
 #define PRNT_C 0x21
 #define GET_I  0x22
 
+enum {
+    ERR_INPUT = 1,
+    ERR_EXPR,
+    ERR_REG,
+    ERR_LAST
+};
+
 struct s_cpu {
     long int        reg[N_REGISTERS];
     long int        size;      
@@ -64,9 +71,8 @@ void cpu_destroy(CPU *cpu) {
         free(cpu);
 }
 
-long get_input(void) {
+long get_input(int *err) {
     long    res = 0;
-    bool    err = false;
     char    str[16] = {'\0'};
     
     fgets(str, 16, stdin);
@@ -74,32 +80,51 @@ long get_input(void) {
     if(isalpha(str[0]))
         res = (int)str[0];
     else {
-        for(unsigned i = 0; i < strlen(str) - 1 && !err; ++i)
+        for(unsigned i = 0; i < strlen(str) - 1 && !*err; ++i)
             if(!isdigit(str[i])) {
-                err = true;
+                *err = ERR_INPUT;
                 break;
              }
-        if(!err)
+        if(!*err)
             res = atol(str);
     }
     return res;
 }
 
+void handle_err(int err, unsigned instruction) {
+    static const char *err_msg[] = {
+        "L'entree clavier a mal etait saisie",
+        "Probleme de formule",
+        "Acces a un registre inexistant"
+    };
+ 
+    if(err > 0 && err < ERR_LAST) {
+        fprintf(stderr, "Instruction %u\n", instruction);
+        fprintf(stderr, "%s\n", err_msg[err - 1]);
+    }
+}
+
 void cpu_run(CPU *cpu) {
     if(!cpu)
         return;
+    
+    int err = 0;
 
     cpu->ins = 0;
 
-    while(cpu->ins < cpu->size) {
+    while(cpu->ins < cpu->size && !err) {
         switch(cpu->code[cpu->ins]) {
             #define OPERATION(instruction, op) \
             case instruction: {\
                 ++cpu->ins; \
                 if(cpu->ins + 2 < cpu->size) {\
+                    if(cpu->code[cpu->ins] > N_REGISTERS) \
+                        err = ERR_REG; \
                     cpu->reg[cpu->code[cpu->ins]] = cpu->code[cpu->ins + 1] op cpu->code[cpu->ins + 2]; \
                     cpu->ins += 2; \
                 } \
+                else \
+                    err = ERR_EXPR;\
                 break; \
             }
 
@@ -133,11 +158,13 @@ void cpu_run(CPU *cpu) {
                 ++cpu->ins;
                 printf("? ");                
                     
-                cpu->reg[cpu->code[cpu->ins]] = get_input();
+                cpu->reg[cpu->code[cpu->ins]] = get_input(&err);
                 break;
         }
-        ++cpu->ins;
+        handle_err(err, cpu->ins);
+        ++cpu->ins; 
     }
+        
 }
 
 int main(int argc, char *argv[]) {
